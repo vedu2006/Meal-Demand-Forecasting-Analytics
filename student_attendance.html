@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Attendance</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+}
+
+.header {
+    background: #1f4e79;
+    color: white;
+    padding: 25px;
+    text-align: center;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.container {
+    width: 92%;
+    max-width: 1000px;
+    margin: 30px auto;
+}
+
+.box {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+}
+
+.student-info {
+    margin-bottom: 20px;
+}
+
+.student-info h2 {
+    color: #1f4e79;
+    margin-bottom: 8px;
+}
+
+.student-info p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.summary {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.summary-box {
+    flex: 1;
+    padding: 18px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.summary-number {
+    display: block;
+    font-size: 28px;
+    margin-top: 6px;
+}
+
+.total-box {
+    background: #e7f1ff;
+    color: #1f4e79;
+}
+
+.present-box {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.absent-box {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.percentage-box {
+    background: #fff3cd;
+    color: #664d03;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #1f4e79;
+    color: white;
+    padding: 13px;
+    text-align: left;
+}
+
+td {
+    padding: 13px;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+    background: #f8f9fa;
+}
+
+.present {
+    color: #198754;
+    font-weight: bold;
+}
+
+.absent {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    margin-right: 7px;
+}
+
+.green-dot {
+    background: #198754;
+}
+
+.red-dot {
+    background: #dc3545;
+}
+
+.empty {
+    text-align: center;
+    padding: 30px;
+    color: #777;
+}
+
+.back {
+    margin-top: 20px;
+}
+
+button {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #555;
+}
+
+@media (max-width: 700px) {
+
+    .summary {
+        flex-direction: column;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    .box {
+        padding: 15px;
+        overflow-x: auto;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="header">
+
+    <h1>Student Attendance</h1>
+
+    <p>Complete Attendance History</p>
+
+</div>
+
+
+<div class="container">
+
+
+<!-- STUDENT INFORMATION -->
+
+<div class="box">
+
+    <div class="student-info">
+
+        <h2>
+            {{ student["name"] }}
+        </h2>
+
+        <p>
+            <strong>Roll No:</strong>
+            {{ student["roll_no"] }}
+        </p>
+
+        <p>
+            <strong>Class:</strong>
+            {{ student["class_name"] }}
+        </p>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary">
+
+        <div class="summary-box total-box">
+
+            Total Days
+
+            <span class="summary-number">
+                {{ total_days }}
+            </span>
+
+        </div>
+
+
+        <div class="summary-box present-box">
+
+            Present
+
+            <span class="summary-number">
+                {{ present_days }}
+            </span>
+
+        </div>
+
+
+        <div class="summary-box absent-box">
+
+            Absent
+
+            <span class="summary-number">
+                {{ absent_days }}
+            </span>
+
+        </div>
+
+
+        <div class="summary-box percentage-box">
+
+            Attendance %
+
+            <span class="summary-number">
+                {{ percentage }}%
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ATTENDANCE HISTORY -->
+
+<div class="box">
+
+    <h2>
+        Attendance History
+    </h2>
+
+
+    {% if records %}
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Date
+                </th>
+
+                <th>
+                    Attendance
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+        {% for record in records %}
+
+            <tr>
+
+                <td>
+                    {{ record["attendance_date"] }}
+                </td>
+
+
+                <td>
+
+                {% if record["status"] == "Present" %}
+
+                    <span class="status-dot green-dot"></span>
+
+                    <span class="present">
+                        Present
+                    </span>
+
+                {% else %}
+
+                    <span class="status-dot red-dot"></span>
+
+                    <span class="absent">
+                        Absent
+                    </span>
+
+                {% endif %}
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    {% else %}
+
+        <div class="empty">
+
+            No attendance has been recorded for this student yet.
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="back">
+
+        <a href="/student_analytics">
+
+            <button>
+                ← Back to Student Analytics
+            </button>
+
+        </a>
+
+    </div>
+
+</div>
+
+
+</div>
+
+</body>
+
+</html>

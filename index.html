@@ -1,0 +1,250 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Meal Analytics Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            color: #333;
+        }
+
+        .header {
+            background: #245784;
+            color: white;
+            text-align: center;
+            padding: 45px 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 34px;
+        }
+
+        .header p {
+            margin-top: 8px;
+            font-size: 17px;
+        }
+
+        .container {
+            width: 88%;
+            max-width: 1150px;
+            margin: 35px auto;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 28px 20px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .stat-card h3 {
+            margin: 0 0 12px;
+            font-size: 17px;
+            color: #555;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #245784;
+        }
+
+        .management {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .management h2 {
+            margin-top: 0;
+            color: #245784;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-top: 25px;
+        }
+
+        .menu-button {
+            display: block;
+            text-decoration: none;
+            background: #245784;
+            color: white;
+            padding: 18px;
+            text-align: center;
+            border-radius: 7px;
+            font-weight: bold;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        .menu-button:hover {
+            background: #1b466d;
+        }
+
+        /* Reports button in the middle */
+        .menu-button:last-child {
+            grid-column: 2;
+        }
+
+        @media (max-width: 900px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                width: 94%;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+
+        <h1>Meal Analytics Dashboard</h1>
+
+        <p>
+            Nutrition, Attendance and Meal Management Platform
+        </p>
+
+    </div>
+
+
+    <div class="container">
+
+        <!-- DASHBOARD STATS -->
+
+        <div class="stats">
+
+            <div class="stat-card">
+
+                <h3>Total Students</h3>
+
+                <div class="stat-number">
+                    {{ total_students }}
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>Today's Meals</h3>
+
+                <div class="stat-number">
+                    {{ todays_meals }}
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>Present Today</h3>
+
+                <div class="stat-number">
+                    {{ present_today }}
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>Attendance</h3>
+
+                <div class="stat-number">
+                    {{ attendance_percentage }}%
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- MANAGEMENT -->
+
+        <div class="management">
+
+            <h2>Management</h2>
+
+            <div class="menu-grid">
+
+                <a href="/attendance" class="menu-button">
+                    📋 View Attendance
+                </a>
+
+                <a href="/students" class="menu-button">
+                    👨‍🎓 Student Management
+                </a>
+
+                <a href="/student_analytics" class="menu-button">
+                    📊 Student Analytics
+                </a>
+
+                <a href="/meal_management" class="menu-button">
+                    🍲 Meal Management
+                </a>
+
+                <a href="/nutrition" class="menu-button">
+                    🥗 Nutrition Analysis
+                </a>
+
+                <a href="/meal_forecasting" class="menu-button">
+                    📊 Meal Forecasting
+                </a>
+
+                <a href="/reports" class="menu-button">
+                    📄 Reports
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

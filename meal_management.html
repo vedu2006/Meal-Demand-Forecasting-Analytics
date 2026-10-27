@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Meal Management</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        button {
+            border: none;
+            padding: 11px 18px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .add-btn {
+            background: #2563eb;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .select-food-btn {
+            background: #16a34a;
+            color: white;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .search-btn {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .food-box {
+            display: none;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #fafafa;
+        }
+
+        .food-search {
+            margin-bottom: 12px;
+        }
+
+        .food-list {
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .food-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .food-item input {
+            width: auto;
+            margin: 0;
+        }
+
+        .selected-foods {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .date-search {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .date-search input {
+            margin-bottom: 0;
+        }
+
+        .date-search button {
+            white-space: nowrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .flash {
+            background: #fff3cd;
+            padding: 12px;
+            border-radius: 7px;
+            margin-bottom: 15px;
+        }
+
+        .no-records {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+
+        @media(max-width: 700px) {
+            .date-search {
+                flex-direction: column;
+            }
+
+            .date-search input,
+            .date-search button {
+                width: 100%;
+            }
+
+            table {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🍽️ Meal Management</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="flash">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+
+    <!-- ADD MEAL -->
+    <div class="card">
+
+        <h2>Add Meal</h2>
+
+        <form method="POST">
+
+            <label>Select Date</label>
+            <input
+                type="date"
+                name="meal_date"
+                value="{{ selected_date }}"
+                required
+            >
+
+            <label>Meal Type</label>
+
+           <select name="meal_type" required>
+    <option value="">Select Meal Type</option>
+    <option value="Breakfast">Breakfast</option>
+    <option value="Lunch">Lunch</option>
+</select>
+
+
+            <!-- SELECT FOOD BUTTON -->
+
+            <label>Food Items</label>
+
+            <button
+                type="button"
+                class="select-food-btn"
+                onclick="toggleFoodList()"
+            >
+                🍴 Select Food
+            </button>
+
+            <div class="selected-foods" id="selectedFoods">
+                No food selected
+            </div>
+
+
+            <!-- FOOD LIST -->
+
+            <div class="food-box" id="foodBox">
+
+                <input
+                    type="text"
+                    class="food-search"
+                    id="foodSearch"
+                    placeholder="🔍 Search food..."
+                    onkeyup="searchFood()"
+                >
+
+                <div class="food-list" id="foodList">
+
+                    {% for food in foods %}
+
+                    <div class="food-item">
+
+                        <input
+                            type="checkbox"
+                            name="food_items"
+                            value="{{ food }}"
+                            onchange="updateSelectedFoods()"
+                        >
+
+                        <span>{{ food }}</span>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <label>Order Meals</label>
+
+            <input
+                type="number"
+                name="planned_meals"
+                min="0"
+                placeholder="Enter ordered meals"
+                required
+            >
+
+
+            <label>Served Meals</label>
+
+            <input
+                type="number"
+                name="meals_served"
+                min="0"
+                placeholder="Enter served meals"
+                required
+            >
+
+
+            <button type="submit" class="add-btn">
+                ➕ Add Meal
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- SEARCH MEALS -->
+
+    <div class="card">
+
+        <h2>🔍 Search Meals</h2>
+
+        <form method="GET">
+
+            <div class="date-search">
+
+                <input
+                    type="date"
+                    name="date"
+                    value="{{ selected_date }}"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="search-btn"
+                >
+                    🔍 Search Meals
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- MEAL RECORDS -->
+
+    <div class="card">
+
+        <h2>
+            Meal Records
+            {% if selected_date %}
+                - {{ selected_date }}
+            {% endif %}
+        </h2>
+
+        {% if meals %}
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Meal Type</th>
+                    <th>Food Items</th>
+                    <th>Order Meals</th>
+                    <th>Served Meals</th>
+                    <th>Wastage</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for meal in meals %}
+
+                <tr>
+
+                    <td>
+                        {{ meal["meal_type"] }}
+                    </td>
+
+                    <td>
+                        {{ meal["menu"] }}
+                    </td>
+
+                    <td>
+                        {{ meal["planned_meals"] }}
+                    </td>
+
+                    <td>
+                        {{ meal["meals_served"] }}
+                    </td>
+
+                    <td>
+                        {{ meal["food_wastage"] }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="no-records">
+            No meal records found for this date.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // Show / hide food list
+    function toggleFoodList() {
+
+        const box = document.getElementById("foodBox");
+
+        if (box.style.display === "block") {
+            box.style.display = "none";
+        } else {
+            box.style.display = "block";
+        }
+    }
+
+
+    // Search food
+    function searchFood() {
+
+        const search =
+            document.getElementById("foodSearch")
+            .value
+            .toLowerCase();
+
+        const foods =
+            document.querySelectorAll(".food-item");
+
+        foods.forEach(function(item) {
+
+            const name =
+                item.innerText.toLowerCase();
+
+            if (name.includes(search)) {
+                item.style.display = "flex";
+            } else {
+                item.style.display = "none";
+            }
+
+        });
+    }
+
+
+    // Show selected food names
+    function updateSelectedFoods() {
+
+        const checked =
+            document.querySelectorAll(
+                'input[name="food_items"]:checked'
+            );
+
+        const selected =
+            Array.from(checked).map(
+                item => item.value
+            );
+
+        const display =
+            document.getElementById("selectedFoods");
+
+        if (selected.length === 0) {
+
+            display.innerText =
+                "No food selected";
+
+        } else {
+
+            display.innerText =
+                "Selected: " + selected.join(", ");
+
+        }
+    }
+
+</script>
+
+</body>
+</html>

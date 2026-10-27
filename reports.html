@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Reports</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        .header {
+            background: #1f4e79;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            color: #1f4e79;
+            margin-top: 0;
+        }
+
+        .date {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+        }
+
+        .card {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            background: #eef4f8;
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #555;
+            font-size: 15px;
+        }
+
+        .number {
+            display: block;
+            font-size: 30px;
+            font-weight: bold;
+            color: #1f4e79;
+            margin-top: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background: #1f4e79;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .section-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .meal-card,
+        .nutrition-card {
+            padding: 20px;
+            border-radius: 8px;
+            background: #eef4f8;
+            text-align: center;
+        }
+
+        .meal-card strong,
+        .nutrition-card strong {
+            display: block;
+            font-size: 26px;
+            color: #1f4e79;
+            margin-top: 8px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            border: none;
+            padding: 12px 22px;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .print {
+            background: #198754;
+        }
+
+        .back {
+            background: #6c757d;
+        }
+
+        @media (max-width: 900px) {
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .section-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .cards,
+            .section-cards {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+        }
+
+        @media print {
+
+            .buttons {
+                display: none;
+            }
+
+            body {
+                background: white;
+            }
+
+            .box {
+                box-shadow: none;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="header">
+
+        <h1>📊 Reports</h1>
+
+        <p>Meal Demand, Nutrition and Attendance Analysis</p>
+
+    </div>
+
+
+    <div class="container">
+
+
+        <!-- ATTENDANCE -->
+
+        <div class="box">
+
+            <h2>📋 Attendance Report</h2>
+
+
+            {% if latest_attendance %}
+
+            <div class="date">
+                Attendance Date:
+                <strong>{{ latest_attendance }}</strong>
+            </div>
+
+            {% else %}
+
+            <div class="date">
+                No attendance has been recorded yet.
+            </div>
+
+            {% endif %}
+
+
+            <div class="cards">
+
+                <div class="card">
+
+                    <h3>Total Students</h3>
+
+                    <span class="number">
+                        {{ total_students }}
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>Present</h3>
+
+                    <span class="number">
+                        {{ total_present }}
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>Absent</h3>
+
+                    <span class="number">
+                        {{ total_absent }}
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>Attendance %</h3>
+
+                    <span class="number">
+                        {{ overall_attendance }}%
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>Attendance Days</h3>
+
+                    <span class="number">
+                        {{ total_attendance_days }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STUDENT ATTENDANCE -->
+
+        <div class="box">
+
+            <h2>👨‍🎓 Student Attendance Summary</h2>
+
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Roll No</th>
+
+                        <th>Student Name</th>
+
+                        <th>Class</th>
+
+                        <th>Present</th>
+
+                        <th>Absent</th>
+
+                        <th>Attendance %</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for student in student_reports %}
+
+                    <tr>
+
+                        <td>
+                            {{ student.roll_no }}
+                        </td>
+
+                        <td>
+                            {{ student.name }}
+                        </td>
+
+                        <td>
+                            {{ student.class_name }}
+                        </td>
+
+                        <td>
+                            {{ student.present }}
+                        </td>
+
+                        <td>
+                            {{ student.absent }}
+                        </td>
+
+                        <td>
+                            {{ student.percentage }}%
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="6" style="text-align:center;">
+                            No students found.
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- MEAL REPORT -->
+
+        <div class="box">
+
+            <h2>🍱 Meal Management Report</h2>
+
+
+            <div class="section-cards">
+
+                <div class="meal-card">
+
+                    Meal Days
+
+                    <strong>
+                        {{ total_meal_days }}
+                    </strong>
+
+                </div>
+
+
+                <div class="meal-card">
+
+                    Planned Meals
+
+                    <strong>
+                        {{ total_planned }}
+                    </strong>
+
+                </div>
+
+
+                <div class="meal-card">
+
+                    Meals Served
+
+                    <strong>
+                        {{ total_served }}
+                    </strong>
+
+                </div>
+
+
+                <div class="meal-card">
+
+                    Food Wastage
+
+                    <strong>
+                        {{ total_wastage }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- NUTRITION REPORT -->
+
+        <div class="box">
+
+            <h2>🥗 Nutrition Report</h2>
+
+
+            <div class="section-cards">
+
+                <div class="nutrition-card">
+
+                    Nutrition Days
+
+                    <strong>
+                        {{ nutrition_days }}
+                    </strong>
+
+                </div>
+
+
+                <div class="nutrition-card">
+
+                    Calories
+
+                    <strong>
+                        {{ total_calories }}
+                    </strong>
+
+                </div>
+
+
+                <div class="nutrition-card">
+
+                    Protein
+
+                    <strong>
+                        {{ total_protein }} g
+                    </strong>
+
+                </div>
+
+
+                <div class="nutrition-card">
+
+                    Carbohydrates
+
+                    <strong>
+                        {{ total_carbs }} g
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <br>
+
+
+            <div class="nutrition-card">
+
+                Total Fat
+
+                <strong>
+                    {{ total_fat }} g
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECENT MEALS -->
+
+        <div class="box">
+
+            <h2>🍽️ Recent Meal Records</h2>
+
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Date</th>
+
+                        <th>Meal Type</th>
+
+                        <th>Menu</th>
+
+                        <th>Planned</th>
+
+                        <th>Served</th>
+
+                        <th>Wastage</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for meal in recent_meals %}
+
+                    <tr>
+
+                        <td>
+                            {{ meal.meal_date }}
+                        </td>
+
+                        <td>
+                            {{ meal.meal_type }}
+                        </td>
+
+                        <td>
+                            {{ meal.menu }}
+                        </td>
+
+                        <td>
+                            {{ meal.planned_meals }}
+                        </td>
+
+                        <td>
+                            {{ meal.meals_served }}
+                        </td>
+
+                        <td>
+                            {{ meal.food_wastage }}
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="6" style="text-align:center;">
+                            No meal records found.
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- BUTTONS -->
+
+        <div class="buttons">
+
+            <button
+                class="print"
+                onclick="window.print()"
+            >
+                🖨️ Print Report
+            </button>
+
+
+            <a href="/">
+
+                <button class="back">
+                    ← Back to Dashboard
+                </button>
+
+            </a>
+
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

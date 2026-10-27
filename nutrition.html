@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Nutrition Analysis</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 7px;
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Summary */
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .summary-box {
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8fafc;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .summary-box h3 {
+            margin: 0 0 10px;
+        }
+
+        .summary-box p {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        /* Main table */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            border: 1px solid #ddd;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        /* Food list */
+
+        .food-list {
+            text-align: left;
+        }
+
+        .food-list div {
+            padding: 4px 0;
+        }
+
+        /* Total */
+
+        .total-row {
+            background: #e8f1ff !important;
+            font-weight: bold;
+        }
+
+        .total-row td {
+            font-size: 16px;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+        }
+
+        @media(max-width: 850px) {
+
+            .summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <h1>🥗 Nutrition Analysis</h1>
+
+
+    <!-- DATE SEARCH -->
+
+    <div class="card">
+
+        <h2>🔍 Select Date</h2>
+
+        <form method="GET">
+
+            <div class="search-box">
+
+                <input
+                    type="date"
+                    name="date"
+                    value="{{ selected_date }}"
+                    required
+                >
+
+                <button type="submit">
+                    Get Nutrition Data
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    {% if nutrition_data %}
+
+
+    <!-- DATE -->
+
+    <div class="card">
+
+        <h2>
+            📅 Date:
+            {{ selected_date }}
+        </h2>
+
+    </div>
+
+
+    <!-- NUTRITION TABLE -->
+
+    <div class="card">
+
+        <h2>🍽️ Meal Nutrition</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Date</th>
+
+                    <th>Meal</th>
+
+                    <th>Food Items</th>
+
+                    <th>Students Served</th>
+
+                    <th>Calories / Student</th>
+
+                    <th>Protein</th>
+
+                    <th>Carbs</th>
+
+                    <th>Fat</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for meal in nutrition_data %}
+
+                <tr>
+
+                    <!-- DATE -->
+
+                    <td>
+                        {{ meal.date }}
+                    </td>
+
+
+                    <!-- MEAL -->
+
+                    <td>
+                        <strong>
+                            {{ meal.meal_type }}
+                        </strong>
+                    </td>
+
+
+                    <!-- FOOD ITEMS ONE BELOW ANOTHER -->
+
+                    <td>
+
+                        <div class="food-list">
+
+                            {% for food in meal.food_items %}
+
+                            <div>
+                                🍴 {{ food }}
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </td>
+
+
+                    <!-- STUDENTS -->
+
+                    <td>
+                        {{ meal.students }}
+                    </td>
+
+
+                    <!-- NUTRITION -->
+
+                    <td>
+                        {{ meal.calories }} kcal
+                    </td>
+
+                    <td>
+                        {{ meal.protein }} g
+                    </td>
+
+                    <td>
+                        {{ meal.carbs }} g
+                    </td>
+
+                    <td>
+                        {{ meal.fat }} g
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+
+                <!-- FINAL TOTAL -->
+
+                <tr class="total-row">
+
+                    <td colspan="3">
+                        TOTAL
+                    </td>
+
+                    <td>
+                        {{ total_students }}
+                    </td>
+
+                    <td>
+                        {{ total_calories }} kcal
+                    </td>
+
+                    <td>
+                        {{ total_protein }} g
+                    </td>
+
+                    <td>
+                        {{ total_carbs }} g
+                    </td>
+
+                    <td>
+                        {{ total_fat }} g
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- PER STUDENT SUMMARY -->
+
+    <div class="card">
+
+        <h2>📊 Average Nutrition Per Student</h2>
+
+        <div class="summary">
+
+            <div class="summary-box">
+
+                <h3>🔥 Calories</h3>
+
+                <p>
+                    {{ per_student_calories }} kcal
+                </p>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <h3>💪 Protein</h3>
+
+                <p>
+                    {{ per_student_protein }} g
+                </p>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <h3>🍞 Carbs</h3>
+
+                <p>
+                    {{ per_student_carbs }} g
+                </p>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <h3>🥑 Fat</h3>
+
+                <p>
+                    {{ per_student_fat }} g
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% else %}
+
+    <div class="card">
+
+        <div class="no-data">
+
+            No Breakfast or Lunch records found for
+            <strong>{{ selected_date }}</strong>.
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Analytics</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+}
+
+.header {
+    background: #1f4e79;
+    color: white;
+    padding: 25px;
+    text-align: center;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+.box {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+h2 {
+    color: #1f4e79;
+    margin-top: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #1f4e79;
+    color: white;
+    padding: 13px;
+    text-align: left;
+}
+
+td {
+    padding: 13px;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+    background: #f8f9fa;
+}
+
+.student-name {
+    color: #1f4e79;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.student-name:hover {
+    text-decoration: underline;
+}
+
+.percentage {
+    font-weight: bold;
+    color: #1f4e79;
+}
+
+.present {
+    color: #198754;
+    font-weight: bold;
+}
+
+.absent {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.empty {
+    text-align: center;
+    padding: 30px;
+    color: #777;
+}
+
+.back {
+    margin-top: 20px;
+}
+
+button {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #555;
+}
+
+.info {
+    background: #e7f1ff;
+    color: #1f4e79;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 700px) {
+
+    table {
+        font-size: 13px;
+    }
+
+    .box {
+        padding: 15px;
+        overflow-x: auto;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+    <h1>Student Analytics</h1>
+
+    <p>Overall Student Attendance</p>
+
+</div>
+
+
+<div class="container">
+
+<div class="box">
+
+    <h2>Student Attendance Summary</h2>
+
+    <div class="info">
+        💡 Click on a student's name to view their complete attendance history.
+    </div>
+
+
+    {% if analytics %}
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Roll No</th>
+
+                <th>Student Name</th>
+
+                <th>Class</th>
+
+                <th>Present</th>
+
+                <th>Absent</th>
+
+                <th>Attendance %</th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+        {% for student in analytics %}
+
+            <tr>
+
+                <td>
+                    {{ student.roll_no }}
+                </td>
+
+
+                <td>
+
+                    <a
+                        href="/student_attendance/{{ student.id }}"
+                        class="student-name"
+                    >
+
+                        {{ student.name }}
+
+                    </a>
+
+                </td>
+
+
+                <td>
+                    {{ student.class_name }}
+                </td>
+
+
+                <td class="present">
+                    {{ student.present_days }}
+                </td>
+
+
+                <td class="absent">
+                    {{ student.absent_days }}
+                </td>
+
+
+                <td class="percentage">
+                    {{ student.percentage }}%
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    {% else %}
+
+        <div class="empty">
+
+            No students or attendance data available yet.
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="back">
+
+        <a href="/">
+
+            <button>
+                ← Back to Dashboard
+            </button>
+
+        </a>
+
+    </div>
+
+</div>
+
+</div>
+
+</body>
+</html>
